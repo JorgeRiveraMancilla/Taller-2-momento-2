@@ -1,0 +1,55 @@
+room_id: A unique number identifying an Airbnb listing. The listing has a URL on the Airbnb web site of
+http://airbnb.com/rooms/room_id
+
+survey_id:
+
+host_id: A unique number identifying an Airbnb host. The host’s page has a URL on the Airbnb web site of
+http://airbnb.com/users/show/host_id
+
+room_type: One of “Entire home/apt”, “Private room”, or “Shared room”
+
+country: For example, “United States” or “Italy”
+
+city: As entered in the page. This value may not match the search_area. For example, many listings have Brooklyn as the
+city even though they appear in the New York search_area. The city field is not used much in any analysis.
+
+borough: A subregion of the city or search area for which the survey is carried out. The borough is taken from a
+shapefile of the city that is obtained independently of the Airbnb web site. For some cities, there is no borough
+information; for others the borough may be a number. If you have better shapefiles for a city of interest, please
+send them to me.
+
+neighborhood: As with borough: a subregion of the city or search area for which the survey is carried out. For cities
+that have both, a neighbourhood is smaller than a borough. For some cities there is no neighbourhood information.
+
+reviews: The number of reviews that a listing has received. Airbnb has said that 70% of visits end up with a review,
+so the number of reviews can be used to estimate the number of visits. Note that such an estimate will not be reliable
+for an individual listing (especially as reviews occasionally vanish from the site), but over a city as a whole it
+should be a useful metric of traffic.
+
+overall_satisfaction: The average rating (out of five) that the listing has received from those visitors who left a
+review.
+
+accommodates: The number of guests a listing can accommodate.
+
+bedrooms: The number of bedrooms a listing offers.
+
+bathrooms: If listed, the number of bathrooms.
+
+price: The price (in $US) for a night stay. In early surveys, there may be some values that were recorded by month.
+
+minstay: The minimum stay for a visit, as posted by the host.
+
+name:
+
+property_type:
+
+last_modified: the date and time that the values were read from the Airbnb web site. A timestamp recording when the
+script collected the data.
+
+latitude: The latitude and longitude of the listing as posted on the Airbnb site: this may be off by a
+few hundred metres. I do not have a way to track individual listing locations with
+
+longitude: The latitude and longitude of the listing as posted on the Airbnb site: this may be off by a
+few hundred metres. I do not have a way to track individual listing locations with
+
+location:
