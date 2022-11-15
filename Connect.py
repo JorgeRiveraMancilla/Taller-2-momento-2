@@ -19,6 +19,14 @@ class Connect:
         cursor.close()
         self.connect.commit()
 
+    def create_tables(self, drop_statements, create_statements):
+        if not self.is_connected:
+            raise psycopg2.OperationalError
+
+        for i in range(len(drop_statements)):
+            self.execute(drop_statements[i])
+            self.execute(create_statements[i])
+
     def close(self):
         if not self.is_connected:
             raise psycopg2.OperationalError
