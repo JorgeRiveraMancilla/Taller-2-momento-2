@@ -3,7 +3,7 @@ from DataFrame import DataFrame
 
 
 if __name__ == '__main__':
-    connect = Connect('project', 'postgres', 'copito')
+    connect = Connect('project', 'pad', 'padPasswd')
 
     default_values = {
         'survey_id': 1,
