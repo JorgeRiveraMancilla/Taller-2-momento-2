@@ -15,7 +15,7 @@ drop_table_statements = [
     'DROP TABLE IF EXISTS countries CASCADE;']
 create_table_statements = [
     'CREATE TABLE rooms'
-    '(id SERIAL NOT NULL,'
+    '(id int4 NOT NULL,'
     'overall_satisfaction float4,'
     'reviews int4 NOT NULL,'
     'accommodates int4,'
@@ -25,69 +25,58 @@ create_table_statements = [
     'minstay int4,'
     'name varchar(255),'
     'last_modified timestamp NOT NULL,'
-    'latitude int4 NOT NULL,'
-    'longitude float8 NOT NULL,'
+    'latitude int4,'
+    'longitude float8,'
     'id_location int4 NOT NULL,'
     'id_host int4 NOT NULL,'
-    'id_property_type int4 NOT NULL,'
+    'id_property_type int4,'
     'id_type int4 NOT NULL,'
-    'id_survey int4 NOT NULL,'
-    'PRIMARY KEY (id));',
+    'id_survey int4 NOT NULL);',
 
     'CREATE TABLE surveys'
-    '(id SERIAL NOT NULL,'
-    'PRIMARY KEY (id));',
+    '(id SERIAL NOT NULL PRIMARY KEY);',
 
     'CREATE TABLE hosts'
-    '(id SERIAL NOT NULL,'
-    'PRIMARY KEY (id));',
+    '(id SERIAL NOT NULL PRIMARY KEY);',
 
     'CREATE TABLE property_types'
-    '(id SERIAL NOT NULL,'
-    'name varchar(255) NOT NULL,'
-    'PRIMARY KEY (id));',
+    '(id SERIAL NOT NULL PRIMARY KEY,'
+    'name varchar(255) NOT NULL);',
 
     'CREATE TABLE types'
-    '(id SERIAL NOT NULL,'
-    'name varchar(255) NOT NULL,'
-    'PRIMARY KEY (id));',
+    '(id SERIAL NOT NULL PRIMARY KEY,'
+    'name varchar(255) NOT NULL);',
 
     'CREATE TABLE locations'
-    '(id SERIAL NOT NULL,'
+    '(id SERIAL NOT NULL PRIMARY KEY,'
     'id_neighborhood int4 NOT NULL,'
     'id_borough int4 NOT NULL,'
     'id_city int4 NOT NULL,'
-    'id_country int4 NOT NULL,'
-    'PRIMARY KEY (id));',
+    'id_country int4 NOT NULL);',
 
     'CREATE TABLE neighborhoods'
-    '(id SERIAL NOT NULL,'
+    '(id SERIAL NOT NULL PRIMARY KEY,'
     'name varchar(255) NOT NULL,'
-    'id_borough int4 NOT NULL,'
-    'PRIMARY KEY (id));',
+    'id_borough int4 NOT NULL);',
 
     'CREATE TABLE attractions'
-    '(id SERIAL NOT NULL,'
+    '(id SERIAL NOT NULL PRIMARY KEY,'
     'name varchar(255) NOT NULL,'
-    'id_neighborhood int4 NOT NULL,'
-    'PRIMARY KEY (id));',
+    'id_neighborhood int4 NOT NULL);',
 
     'CREATE TABLE boroughs'
-    '(id SERIAL NOT NULL,'
+    '(id SERIAL NOT NULL PRIMARY KEY,'
     'name varchar(255),'
-    'id_city int4 NOT NULL,'
-    'PRIMARY KEY (id));',
+    'id_city int4 NOT NULL);',
 
     'CREATE TABLE cities'
-    '(id SERIAL NOT NULL,'
+    '(id SERIAL NOT NULL PRIMARY KEY,'
     'name varchar(255) NOT NULL,'
-    'id_country int4 NOT NULL,'
-    'PRIMARY KEY (id));',
+    'id_country int4 NOT NULL);',
 
     'CREATE TABLE countries'
-    '(id SERIAL NOT NULL,'
-    'name varchar(255),'
-    'PRIMARY KEY (id));']
+    '(id SERIAL NOT NULL PRIMARY KEY,'
+    'name varchar(255));']
 
 path_file_1 = 'resources/Lisbon18-03-2015.csv'
 default_values_1 = {
@@ -98,11 +87,34 @@ default_values_1 = {
     'last_modified': '2015-03-18 00:00:00.000'
 }
 
+path_file_2 = 'resources/Lisbon27-07-2017.csv'
+default_values_2 = {
+    'survey_id': 2,
+    'country': 'Portugal',
+    'city': 'Lisbon',
+    'borough': 'Lisbon',
+    'last_modified': '2017-07-27 00:00:00.000'
+}
+
+path_file_3 = 'resources/SaoPaulo01-07-2017.csv'
+default_values_3 = {
+    'survey_id': 3,
+    'country': 'Brazil',
+    'city': 'Sao Paulo',
+    'borough': 'Sao Paulo',
+    'last_modified': '2017-07-01 00:00:00.000'
+}
+
 if __name__ == '__main__':
     connect = Connect('project', 'postgres', 'copito')
     connect.create_tables(drop_table_statements, create_table_statements)
 
     dataframe = DataFrame(path_file_1, default_values_1)
     dataframe.normalize()
-
-
+    dataframe.insert(connect)
+    dataframe = DataFrame(path_file_2, default_values_2)
+    dataframe.normalize()
+    dataframe.insert(connect)
+    dataframe = DataFrame(path_file_3, default_values_3)
+    dataframe.normalize()
+    dataframe.insert(connect)
