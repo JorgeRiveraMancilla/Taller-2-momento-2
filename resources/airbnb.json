@@ -21,7 +21,7 @@
       "name": "location",
       "label": "Location",
       "levels": [
-        { "name": "neighborhood", "attributes": ["neigborhood"] },
+        { "name": "neighborhood", "attributes": ["neighborhood"] },
         { "name": "borough", "attributes": ["borough"] },
         { "name": "city", "attributes": ["city"] },
         { "name": "country", "attributes": ["country"] }
@@ -30,7 +30,7 @@
         { "name": "complete", "levels":["country", "city", "borough", "neighborhood"] },
         { "name": "country", "levels":["country"] },
         { "name": "city", "levels":["city"] },
-        { "name": "neighborhood", "levels":["city", "borough", "neigborhood"] }
+        { "name": "neighborhood", "levels":["city", "borough", "neighborhood"] }
       ],
       "default_hierarchy_name": "complete"
     },
@@ -42,15 +42,31 @@
   ],
   "cubes": [
     {
-      "name": "type",
+      "name": "facts_table",
       "dimensions": ["survey", "location", "type"],
       "measures": ["price", "minstay", "accomodates", "bedrooms", "bathrooms", "overall_satisfaction", "reviews"],
-      "aggregates": [],
-      "joins": [
-        { "master": "location_id", "detail": "location.id" },
-        { "master": "type_id", "detail": "type.id" },
-        { "master": "survey_id", "detail": "survey.id" }
+      "aggregates": [
+        {
+          "name": "record_count",
+          "function": "count"
+        },
+        {
+            "name": "price_avg",
+            "measure": "price",
+            "function": "avg"
+        }
       ],
+      "joins": [
+        { "master": "location_id", "detail": "neighborhood_dimension.id" },
+        { "master": "type_id", "detail": "type_dimension.id" },
+        { "master": "survey_id", "detail": "survey_dimension.id" }
+      ],
+      "mapping": {
+        "location.neighborhood": "neighborhood_dimension.neighborhood",
+        "location.borough": "borough_dimension.borough",
+        "location.city": "city_dimension.city",
+        "location.country": "country_dimension.country"
+      },
       "key": "room_id"
     }
   ]

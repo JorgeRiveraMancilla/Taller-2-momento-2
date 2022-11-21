@@ -1,4 +1,5 @@
 from Connect import Connect
+from Cube import Cube
 from DataFrame import DataFrame
 
 drop_table_statements = [
@@ -106,15 +107,24 @@ default_values_3 = {
 }
 
 if __name__ == '__main__':
-    connect = Connect('project', 'postgres', 'copito')
+    pwd = 'copito'
+    connect = Connect('project', 'postgres', pwd)
     connect.create_tables(drop_table_statements, create_table_statements)
+
+    cube = Cube(connect, pwd)
 
     dataframe_1 = DataFrame(path_file_1, default_values_1)
     dataframe_1.normalize()
     dataframe_1.insert(connect)
+    cube.load_data(pwd,dataframe_1)
     dataframe_2 = DataFrame(path_file_2, default_values_2)
     dataframe_2.normalize()
     dataframe_2.insert(connect)
+    cube.load_data(pwd,dataframe_2)
     dataframe_3 = DataFrame(path_file_3, default_values_3)
     dataframe_3.normalize()
     dataframe_3.insert(connect)
+    cube.load_data(pwd,dataframe_3)
+
+    cube.load_cube()
+    cube.test_cube()
