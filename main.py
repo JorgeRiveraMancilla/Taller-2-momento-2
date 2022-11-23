@@ -81,13 +81,14 @@ create_table_statements = [
     'name varchar(255));']
 
 if __name__ == '__main__':
-    connect = Connect('rdb')
-    connect.create_tables(drop_table_statements, create_table_statements)
-
     config = configparser.ConfigParser()
     config.read('resources/config.ini')
     create = config['database'].getboolean('create')
     paths = config['paths']
+
+    connect = Connect('rdb')
+    if create:
+        connect.create_tables(drop_table_statements, create_table_statements)
     cube = Cube(connect, create)
 
     dataframe_1 = DataFrame(paths['path_file_lisbon_2015'],

@@ -58,10 +58,13 @@
       ],
       "joins": [
         { "master": "location_id", "detail": "neighborhood_dimension.id" },
+        { "master": "neighborhood_dimension.borough_id", "detail": "borough_dimension.id" },
+        { "master": "borough_dimension.city_id", "detail": "city_dimension.id" },
+        { "master": "city_dimension.country_id", "detail": "country_dimension.id" },
         { "master": "type_id", "detail": "type_dimension.id" },
         { "master": "survey_id", "detail": "survey_dimension.id" }
       ],
-      "mapping": {
+      "mappings": {
         "location.neighborhood": "neighborhood_dimension.neighborhood",
         "location.borough": "borough_dimension.borough",
         "location.city": "city_dimension.city",
