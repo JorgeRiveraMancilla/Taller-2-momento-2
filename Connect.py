@@ -1,10 +1,18 @@
+import configparser
 import psycopg2
 
 
 class Connect:
-    def __init__(self, db_name, db_user, db_password):
+    def __init__(self, db):
         try:
-            self.connect = psycopg2.connect(database=db_name, user=db_user, password=db_password)
+            config = configparser.ConfigParser()
+            config.read('resources/config.ini')
+            connection_info = config['database']
+            self.connect = psycopg2.connect(database=connection_info[db],
+                                            user=connection_info['user'],
+                                            password=connection_info['password'],
+                                            host=connection_info['server'],
+                                            port=connection_info.getint('port'))
             self.is_connected = True
 
         except psycopg2.OperationalError:

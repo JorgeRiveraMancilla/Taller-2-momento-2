@@ -61,17 +61,18 @@ cube_create_table_statements = [
 
 
 class Cube:
-    def __init__(self, relational_connect, pwd):
+    def __init__(self, relational_connect, create):
         self.workspace = None
         self.browser = None
         self.rdb = relational_connect
         self.is_connected = False
-        connect = Connect('airbnb', 'postgres', pwd)
-        connect.create_tables(cube_drop_table_statements, cube_create_table_statements)
-        connect.close()
+        if create:
+            connect = Connect('mdb')
+            connect.create_tables(cube_drop_table_statements, cube_create_table_statements)
+            connect.close()
 
-    def load_data(self, pwd, dataframe):
-        connect = Connect('airbnb', 'postgres', pwd)
+    def load_data(self, dataframe):
+        connect = Connect('mdb')
 
         for survey_id in dataframe.dataframe['survey_id'].unique():
             table = connect.select('SELECT * FROM survey_dimension WHERE survey_dimension.id = ' + str(survey_id) + ';')
@@ -200,7 +201,7 @@ class Cube:
 
     def load_cube(self):
         settings = ConfigParser()
-        settings.read("./resources/slicer.ini")
+        settings.read("./resources/config.ini")
         self.workspace = Workspace(config=settings)
         self.workspace.import_model("resources/airbnb.json")
         self.browser = self.workspace.browser("facts_table")

@@ -1,6 +1,7 @@
 from Connect import Connect
 from Cube import Cube
 from DataFrame import DataFrame
+import configparser
 
 drop_table_statements = [
     'DROP TABLE IF EXISTS rooms CASCADE;',
@@ -79,52 +80,35 @@ create_table_statements = [
     '(id SERIAL NOT NULL PRIMARY KEY,'
     'name varchar(255));']
 
-path_file_1 = 'resources/Lisbon18-03-2015.csv'
-default_values_1 = {
-    'survey_id': 1,
-    'country': 'Portugal',
-    'city': 'Lisbon',
-    'borough': 'Lisbon',
-    'last_modified': '2015-03-18 00:00:00.000'
-}
-
-path_file_2 = 'resources/Lisbon27-07-2017.csv'
-default_values_2 = {
-    'survey_id': 2,
-    'country': 'Portugal',
-    'city': 'Lisbon',
-    'borough': 'Lisbon',
-    'last_modified': '2017-07-27 00:00:00.000'
-}
-
-path_file_3 = 'resources/SaoPaulo01-07-2017.csv'
-default_values_3 = {
-    'survey_id': 3,
-    'country': 'Brazil',
-    'city': 'Sao Paulo',
-    'borough': 'Sao Paulo',
-    'last_modified': '2017-07-01 00:00:00.000'
-}
-
 if __name__ == '__main__':
-    pwd = 'copito'
-    connect = Connect('project', 'postgres', pwd)
+    connect = Connect('rdb')
     connect.create_tables(drop_table_statements, create_table_statements)
 
-    cube = Cube(connect, pwd)
+    config = configparser.ConfigParser()
+    config.read('resources/config.ini')
+    create = config['database'].getboolean('create')
+    paths = config['paths']
+    cube = Cube(connect, create)
 
-    dataframe_1 = DataFrame(path_file_1, default_values_1)
+    dataframe_1 = DataFrame(paths['path_file_lisbon_2015'],
+                            config['default_values_lisbon_2015'])
     dataframe_1.normalize()
-    dataframe_1.insert(connect)
-    cube.load_data(pwd,dataframe_1)
-    dataframe_2 = DataFrame(path_file_2, default_values_2)
+
+    dataframe_2 = DataFrame(paths['path_file_lisbon_2017'],
+                            config['default_values_lisbon_2017'])
     dataframe_2.normalize()
-    dataframe_2.insert(connect)
-    cube.load_data(pwd,dataframe_2)
-    dataframe_3 = DataFrame(path_file_3, default_values_3)
+
+    dataframe_3 = DataFrame(paths['path_file_sao_paulo_2017'],
+                            config['default_values_sao_paulo_2017'])
     dataframe_3.normalize()
-    dataframe_3.insert(connect)
-    cube.load_data(pwd,dataframe_3)
+
+    if create:
+        dataframe_1.insert(connect)
+        cube.load_data(dataframe_1)
+        dataframe_2.insert(connect)
+        cube.load_data(dataframe_2)
+        dataframe_3.insert(connect)
+        cube.load_data(dataframe_3)
 
     cube.load_cube()
     cube.test_cube()
