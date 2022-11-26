@@ -1,4 +1,4 @@
-from cubes import Workspace
+from cubes import Workspace, PointCut, Cell
 from cubes.compat import ConfigParser
 import pandas
 from datetime import date
@@ -208,5 +208,25 @@ class Cube:
 
     def test_cube(self):
         result = self.browser.aggregate()
+        count = result.summary["record_count"]
+        print(count)
+        cut = [
+            PointCut("location", ["Brazil"], "country"),
+            PointCut("survey", [2017], "year")
+        ]
+        cell = Cell(self.browser.cube, cut)
+        result = self.browser.aggregate(cell)
+        fields = ["overall_satisfaction", "reviews", "price"]
+        facts = self.browser.facts(cell, fields)
+        for fact in facts:
+            print(fact)
+        count = result.summary["record_count"]
+        print(count)
+        cut = [
+            PointCut("location", ["Portugal"], "country"),
+            PointCut("survey", [2017], "year")
+        ]
+        cell = Cell(self.browser.cube, cut)
+        result = self.browser.aggregate(cell)
         count = result.summary["record_count"]
         print(count)

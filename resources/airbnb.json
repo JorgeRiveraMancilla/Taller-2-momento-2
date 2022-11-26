@@ -47,7 +47,7 @@
       "measures": [
         {"name":  "price", "aggregates": ["avg", "min", "max"]},
         {"name":  "minstay", "aggregates": ["avg", "min", "max"]},
-        {"name":  "accomodates", "aggregates": ["avg", "min", "max"]},
+        {"name":  "accommodates", "aggregates": ["avg", "min", "max"]},
         {"name":  "bedrooms", "aggregates": ["avg", "min", "max"]},
         {"name":  "bathrooms", "aggregates": ["avg", "min", "max"]},
         {"name":  "overall_satisfaction", "aggregates": ["avg", "min", "max"]},
