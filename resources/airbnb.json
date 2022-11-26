@@ -73,7 +73,7 @@
         "location.city": "city_dimension.city",
         "location.country": "country_dimension.country"
       },
-      "key": "room_id"
+      "key": "id"
     }
   ]
 }

@@ -37,13 +37,12 @@ class Connect:
         cursor.close()
         return result
 
-    def create_tables(self, drop_statements, create_statements):
+    def create_tables(self, db):
         if not self.is_connected:
             raise psycopg2.OperationalError
 
-        for i in range(len(drop_statements)):
-            self.execute(drop_statements[i])
-            self.execute(create_statements[i])
+        script = open("resources/"+db+"_schema.sql", mode="r").read()
+        self.execute(script)
 
     def close(self):
         if not self.is_connected:

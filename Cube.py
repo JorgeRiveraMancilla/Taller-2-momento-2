@@ -2,62 +2,7 @@ from cubes import Workspace, PointCut, Cell
 from cubes.compat import ConfigParser
 import pandas
 from datetime import date
-
-
 from Connect import Connect
-
-cube_drop_table_statements = [
-    'DROP TABLE IF EXISTS facts_table CASCADE;',
-    'DROP TABLE IF EXISTS survey_dimension CASCADE;',
-    'DROP TABLE IF EXISTS type_dimension CASCADE;',
-    'DROP TABLE IF EXISTS neighborhood_dimension CASCADE;',
-    'DROP TABLE IF EXISTS borough_dimension CASCADE;',
-    'DROP TABLE IF EXISTS city_dimension CASCADE;',
-    'DROP TABLE IF EXISTS country_dimension CASCADE;']
-
-cube_create_table_statements = [
-    'CREATE TABLE facts_table '
-    '(price float8 NOT NULL, '
-    'minstay int4, '
-    'accommodates int4, '
-    'bedrooms int4, '
-    'bathrooms int4, '
-    'overall_satisfaction float8, '
-    'reviews int4 NOT NULL, '
-    'location_id int4 NOT NULL, '
-    'type_id int4 NOT NULL, '
-    'survey_id int4 NOT NULL, '
-    'room_id int4 NOT NULL);',
-
-    'CREATE TABLE survey_dimension'
-    '(id SERIAL NOT NULL PRIMARY KEY, '
-    '"date" date NOT NULL,'
-    'day int4 NOT NULL,'
-    'month int4 NOT NULL,'
-    'year int4 NOT NULL);',
-
-    'CREATE TABLE type_dimension'
-    '(id SERIAL NOT NULL PRIMARY KEY,'
-    'name varchar(255) NOT NULL);',
-
-    'CREATE TABLE neighborhood_dimension'
-    '(id SERIAL NOT NULL PRIMARY KEY,'
-    'neighborhood varchar(255) NOT NULL,'
-    'borough_id int4 NOT NULL);',
-
-    'CREATE TABLE borough_dimension'
-    '(id SERIAL NOT NULL PRIMARY KEY,'
-    'borough varchar(255),'
-    'city_id int4 NOT NULL);',
-
-    'CREATE TABLE city_dimension'
-    '(id SERIAL NOT NULL PRIMARY KEY,'
-    'city varchar(255) NOT NULL,'
-    'country_id int4 NOT NULL);',
-
-    'CREATE TABLE country_dimension'
-    '(id SERIAL NOT NULL PRIMARY KEY,'
-    'country varchar(255));']
 
 
 class Cube:
@@ -68,7 +13,7 @@ class Cube:
         self.is_connected = False
         if create:
             connect = Connect('mdb')
-            connect.create_tables(cube_drop_table_statements, cube_create_table_statements)
+            connect.create_tables('mdb')
             connect.close()
 
     def load_data(self, dataframe):
