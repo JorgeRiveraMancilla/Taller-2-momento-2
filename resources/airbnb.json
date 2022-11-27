@@ -41,18 +41,19 @@
 		{
 			"name": "facts_table",
 			"dimensions": ["survey", "location", "type"],
-			"measures": [
-				{"name":  "price", "aggregates": ["avg", "min", "max"]},
-				{"name":  "minstay", "aggregates": ["avg", "min", "max"]},
-				{"name":  "accommodates", "aggregates": ["avg", "min", "max"]},
-				{"name":  "bedrooms", "aggregates": ["avg", "min", "max"]},
-				{"name":  "bathrooms", "aggregates": ["avg", "min", "max"]},
-				{"name":  "overall_satisfaction", "aggregates": ["avg", "min", "max"]},
-				{"name":  "reviews", "aggregates": ["avg", "min", "max"]}
-			],
+			"measures": ["price", "minstay", "accommodates", "bedrooms", "bathrooms", "overall_satisfaction", "reviews"],
 			"aggregates": [
 				{
 					"name": "record_count", "function": "count"
+				},
+				{
+					"name": "price_avg", "measure": "price", "function": "avg"
+				},
+				{
+					"name": "price_min", "measure": "price", "function": "min"
+				},
+				{
+					"name": "price_max", "measure": "price", "function": "max"
 				}
 			],
 			"joins": [
