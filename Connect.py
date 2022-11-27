@@ -8,7 +8,8 @@ class Connect:
             config = configparser.ConfigParser()
             config.read('resources/config.ini')
             connection_info = config['database']
-            self.connect = psycopg2.connect(database=connection_info[db],
+            self.db = connection_info[db]
+            self.connect = psycopg2.connect(database=db,
                                             user=connection_info['user'],
                                             password=connection_info['password'],
                                             host=connection_info['server'],
@@ -37,11 +38,11 @@ class Connect:
         cursor.close()
         return result
 
-    def create_tables(self, db):
+    def create_tables(self):
         if not self.is_connected:
             raise psycopg2.OperationalError
 
-        script = open("resources/"+db+"_schema.sql", mode="r").read()
+        script = open('resources/' + self.db + '_schema.sql', mode='r').read()
         self.execute(script)
 
     def close(self):
@@ -49,4 +50,5 @@ class Connect:
             raise psycopg2.OperationalError
 
         self.connect.close()
+        del self.db
         self.is_connected = False
