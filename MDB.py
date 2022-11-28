@@ -1,4 +1,5 @@
 from datetime import date
+from RDB import RDB
 
 
 class MDB:
@@ -6,26 +7,10 @@ class MDB:
         self.dataframe = dataframe
         self.connect = connect
 
-    def select_statement(self, table, columns, values):
-        statement = 'SELECT * FROM ' + table + ' WHERE '
-        n = len(columns)
-        for i in range(n - 1):
-            statement += table + '.' + columns[i] + ' = ' + values[i] + ' AND '
-        return statement + table + '.' + columns[n - 1] + ' = ' + values[n - 1]
-
-    def insert_statement(self, table, columns, values):
-        start = 'INSERT INTO ' + table + '('
-        end = ') VALUES ('
-        n = len(columns)
-        for i in range(n - 1):
-            start += columns[i] + ', '
-            end += values[i] + ', '
-        return start + columns[n - 1] + end + values[n - 1] + ')'
-
     def insert_surveys(self):
         for survey_id in self.dataframe['survey_id'].unique():
             survey_id = str(survey_id)
-            statement = self.select_statement('survey_dimension', ['id'], [survey_id])
+            statement = RDB.select_statement('survey_dimension', ['id'], [survey_id])
             table = self.connect.select(statement)
             if not table:
                 date_str = self.dataframe['last_modified'].iloc[-1].split(' ')[0]
@@ -33,70 +18,70 @@ class MDB:
                 day = str(date_iso.strftime('%d'))
                 month = str(date_iso.strftime('%m'))
                 year = str(date_iso.strftime('%Y'))
-                statement = self.insert_statement('survey_dimension',
-                                                  ['id', 'date', 'day', 'month', 'year'],
-                                                  [survey_id, '\'' + date_str + '\'', day, month, year])
+                statement = RDB.insert_statement('survey_dimension',
+                                                 ['id', 'date', 'day', 'month', 'year'],
+                                                 [survey_id, '\'' + date_str + '\'', day, month, year])
                 self.connect.execute(statement)
 
     def insert_types(self):
         for room_type in self.dataframe['room_type'].unique():
             room_type = '\'' + str(room_type) + '\''
-            statement = self.select_statement('type_dimension', ['name'], [room_type])
+            statement = RDB.select_statement('type_dimension', ['name'], [room_type])
             table = self.connect.select(statement)
             if not table:
-                statement = self.insert_statement('type_dimension', ['name'], [room_type])
+                statement = RDB.insert_statement('type_dimension', ['name'], [room_type])
                 self.connect.execute(statement)
 
     def insert_countries(self):
         for country in self.dataframe['country'].unique():
             country = '\'' + str(country) + '\''
-            statement = self.select_statement('country_dimension', ['country'], [country])
+            statement = RDB.select_statement('country_dimension', ['country'], [country])
             table = self.connect.select(statement)
             if not table:
-                statement = self.insert_statement('country_dimension', ['country'], [country])
+                statement = RDB.insert_statement('country_dimension', ['country'], [country])
                 self.connect.execute(statement)
 
     def insert_cities(self):
         for keys in self.dataframe.groupby(by=['country', 'city']).groups.keys():
             country = '\'' + str(keys[0]) + '\''
             city = '\'' + str(keys[1]) + '\''
-            statement = self.select_statement('country_dimension', ['country'], [country])
+            statement = RDB.select_statement('country_dimension', ['country'], [country])
             table = self.connect.select(statement)
             id_country = str(table[0][0])
-            statement = self.select_statement('city_dimension', ['city', 'country_id'], [city, id_country])
+            statement = RDB.select_statement('city_dimension', ['city', 'country_id'], [city, id_country])
             table = self.connect.select(statement)
             if not table:
-                statement = self.insert_statement('city_dimension', ['city', 'country_id'], [city, id_country])
+                statement = RDB.insert_statement('city_dimension', ['city', 'country_id'], [city, id_country])
                 self.connect.execute(statement)
 
     def insert_boroughs(self):
         for keys in self.dataframe.groupby(by=['city', 'borough']).groups.keys():
             city = '\'' + str(keys[0]) + '\''
             borough = '\'' + str(keys[1]) + '\''
-            statement = self.select_statement('city_dimension', ['city'], [city])
+            statement = RDB.select_statement('city_dimension', ['city'], [city])
             table = self.connect.select(statement)
             id_city = str(table[0][0])
-            statement = self.select_statement('borough_dimension', ['borough', 'city_id'], [borough, id_city])
+            statement = RDB.select_statement('borough_dimension', ['borough', 'city_id'], [borough, id_city])
             table = self.connect.select(statement)
             if not table:
-                statement = self.insert_statement('borough_dimension', ['borough', 'city_id'], [borough, id_city])
+                statement = RDB.insert_statement('borough_dimension', ['borough', 'city_id'], [borough, id_city])
                 self.connect.execute(statement)
 
     def insert_neighborhoods(self):
         for keys in self.dataframe.groupby(by=['borough', 'neighborhood']).groups.keys():
             borough = '\'' + str(keys[0]) + '\''
             neighborhood = '\'' + str(keys[1]) + '\''
-            statement = self.select_statement('borough_dimension', ['borough'], [borough])
+            statement = RDB.select_statement('borough_dimension', ['borough'], [borough])
             table = self.connect.select(statement)
             id_borough = str(table[0][0])
-            statement = self.select_statement('neighborhood_dimension',
-                                              ['neighborhood', 'borough_id'],
-                                              [neighborhood, id_borough])
+            statement = RDB.select_statement('neighborhood_dimension',
+                                             ['neighborhood', 'borough_id'],
+                                             [neighborhood, id_borough])
             table = self.connect.select(statement)
             if not table:
-                statement = self.insert_statement('neighborhood_dimension',
-                                                  ['neighborhood', 'borough_id'],
-                                                  [neighborhood, id_borough])
+                statement = RDB.insert_statement('neighborhood_dimension',
+                                                 ['neighborhood', 'borough_id'],
+                                                 [neighborhood, id_borough])
                 self.connect.execute(statement)
 
     def insert_rooms(self):
@@ -117,29 +102,29 @@ class MDB:
             borough = '\'' + str(row[columns.index('borough')]) + '\''
             neighborhood = '\'' + str(row[columns.index('neighborhood')]) + '\''
 
-            statement = self.select_statement('country_dimension', ['country'], [country])
+            statement = RDB.select_statement('country_dimension', ['country'], [country])
             table = self.connect.select(statement)
             id_country = str(table[0][0])
 
-            statement = self.select_statement('city_dimension', ['country_id', 'city'], [id_country, city])
+            statement = RDB.select_statement('city_dimension', ['country_id', 'city'], [id_country, city])
             table = self.connect.select(statement)
             id_city = str(table[0][0])
 
-            statement = self.select_statement('borough_dimension', ['city_id', 'borough'], [id_city, borough])
+            statement = RDB.select_statement('borough_dimension', ['city_id', 'borough'], [id_city, borough])
             table = self.connect.select(statement)
             id_borough = str(table[0][0])
 
-            statement = self.select_statement('neighborhood_dimension',
-                                              ['borough_id', 'neighborhood'],
-                                              [id_borough, neighborhood])
+            statement = RDB.select_statement('neighborhood_dimension',
+                                             ['borough_id', 'neighborhood'],
+                                             [id_borough, neighborhood])
             table = self.connect.select(statement)
             id_neighborhood = str(table[0][0])
 
-            statement = self.select_statement('type_dimension', ['name'], [room_type])
+            statement = RDB.select_statement('type_dimension', ['name'], [room_type])
             table = self.connect.select(statement)
             id_type = str(table[0][0])
 
-            statement = self.insert_statement(
+            statement = RDB.insert_statement(
                 'facts_table',
                 ['price', 'minstay', 'accommodates', 'bedrooms', 'bathrooms', 'overall_satisfaction', 'reviews',
                  'location_id', 'type_id', 'survey_id', 'room_id'],

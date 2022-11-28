@@ -3,14 +3,16 @@ class RDB:
         self.dataframe = dataframe
         self.connect = connect
 
-    def select_statement(self, table, columns, values):
+    @staticmethod
+    def select_statement(table, columns, values):
         statement = 'SELECT * FROM ' + table + ' WHERE '
         n = len(columns)
         for i in range(n - 1):
             statement += table + '.' + columns[i] + ' = ' + values[i] + ' AND '
         return statement + table + '.' + columns[n - 1] + ' = ' + values[n - 1]
 
-    def insert_statement(self, table, columns, values):
+    @staticmethod
+    def insert_statement(table, columns, values):
         start = 'INSERT INTO ' + table + '('
         end = ') VALUES ('
         n = len(columns)
