@@ -19,6 +19,7 @@ class DataFrame:
         'price': 'NULL',
         'minstay': 'NULL',
         'name': 'NULL',
+        'property_type': 'NULL',
         'last_modified': 'CONSTRUCTOR',
         'latitude': 'NULL',
         'longitude': 'NULL',
@@ -30,6 +31,10 @@ class DataFrame:
             self.dataframe = pandas.read_csv(path_file)
             self.file_exists = True
             for key, value in default_values.items():
+                try:
+                    value = int(value)
+                except ValueError:
+                    pass
                 self.dict[key] = value
         except FileNotFoundError:
             self.file_exists = False

@@ -1,57 +1,76 @@
 {
-  "name": "airbnb",
-  "dimensions": [
-    {
-      "name": "survey",
-      "label": "Survey Date",
-      "attributes": ["id", "date", "day", "month", "year"],
-      "levels": [
-        { "name": "year", "attributes": ["year"] },
-        { "name": "month", "attributes": ["month"] },
-        { "name": "day", "attributes": ["day"] }
-      ],
-      "hierarchies": [
-        {"name": "date", "levels":["year", "month", "day"] },
-        {"name": "ym", "levels":["year", "month"] },
-        {"name": "year", "levels":["year"] }
-      ],
-      "default_hierarchy_name": "date"
-    },
-    {
-      "name": "location",
-      "label": "Location",
-      "levels": [
-        { "name": "neighborhood", "attributes": ["neigborhood"] },
-        { "name": "borough", "attributes": ["borough"] },
-        { "name": "city", "attributes": ["city"] },
-        { "name": "country", "attributes": ["country"] }
-      ],
-      "hierarchies": [
-        { "name": "complete", "levels":["country", "city", "borough", "neighborhood"] },
-        { "name": "country", "levels":["country"] },
-        { "name": "city", "levels":["city"] },
-        { "name": "neighborhood", "levels":["city", "borough", "neigborhood"] }
-      ],
-      "default_hierarchy_name": "complete"
-    },
-    {
-      "name": "type",
-      "label": "Room Type",
-      "attributes": ["id", "name"]
-    }
-  ],
-  "cubes": [
-    {
-      "name": "type",
-      "dimensions": ["survey", "location", "type"],
-      "measures": ["price", "minstay", "accomodates", "bedrooms", "bathrooms", "overall_satisfaction", "reviews"],
-      "aggregates": [],
-      "joins": [
-        { "master": "location_id", "detail": "location.id" },
-        { "master": "type_id", "detail": "type.id" },
-        { "master": "survey_id", "detail": "survey.id" }
-      ],
-      "key": "room_id"
-    }
-  ]
+	"name": "airbnb",
+	"dimensions": [
+		{
+			"name": "survey",
+			"attributes": ["id", "date", "day", "month", "year"],
+			"levels": [
+				{ "name": "year", "attributes": ["year"] },
+				{ "name": "month", "attributes": ["month"] },
+				{ "name": "day", "attributes": ["day"] }
+			],
+			"hierarchies": [
+				{"name": "date", "levels":["year", "month", "day"] },
+				{"name": "ym", "levels":["year", "month"] },
+				{"name": "year", "levels":["year"] }
+			],
+			"default_hierarchy_name": "date"
+		},
+		{
+			"name": "location",
+			"levels": [
+				{ "name": "neighborhood", "attributes": ["neighborhood"] },
+				{ "name": "borough", "attributes": ["borough"] },
+				{ "name": "city", "attributes": ["city"] },
+				{ "name": "country", "attributes": ["country"] }
+			],
+			"hierarchies": [
+				{ "name": "complete", "levels":["country", "city", "borough", "neighborhood"] },
+				{ "name": "country", "levels":["country"] },
+				{ "name": "city", "levels":["city"] },
+				{ "name": "neighborhood", "levels":["city", "borough", "neighborhood"] }
+			],
+			"default_hierarchy_name": "complete"
+		},
+		{
+			"name": "type",
+			"attributes": ["id", "name"]
+		}
+	],
+	"cubes": [
+		{
+			"name": "facts_table",
+			"dimensions": ["survey", "location", "type"],
+			"measures": ["price", "minstay", "accommodates", "bedrooms", "bathrooms", "overall_satisfaction", "reviews"],
+			"aggregates": [
+				{
+					"name": "record_count", "function": "count"
+				},
+				{
+					"name": "price_avg", "measure": "price", "function": "avg"
+				},
+				{
+					"name": "price_min", "measure": "price", "function": "min"
+				},
+				{
+					"name": "price_max", "measure": "price", "function": "max"
+				}
+			],
+			"joins": [
+				{ "master": "location_id", "detail": "neighborhood_dimension.id" },
+				{ "master": "neighborhood_dimension.borough_id", "detail": "borough_dimension.id" },
+				{ "master": "borough_dimension.city_id", "detail": "city_dimension.id" },
+				{ "master": "city_dimension.country_id", "detail": "country_dimension.id" },
+				{ "master": "type_id", "detail": "type_dimension.id" },
+				{ "master": "survey_id", "detail": "survey_dimension.id" }
+			],
+			"mappings": {
+				"location.neighborhood": "neighborhood_dimension.neighborhood",
+				"location.borough": "borough_dimension.borough",
+				"location.city": "city_dimension.city",
+				"location.country": "country_dimension.country"
+			},
+			"key": "id"
+		}
+	]
 }
