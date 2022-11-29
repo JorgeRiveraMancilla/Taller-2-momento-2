@@ -1,8 +1,5 @@
 import matplotlib.pyplot as plt
-from matplotlib import gridspec
-import numpy as np
 from cubes import PointCut, Cell
-from CaseOne import CaseOne
 
 
 class CaseTwo:

@@ -16,7 +16,7 @@ class DataFrame:
         'accommodates': 'NULL',
         'bedrooms': 'NULL',
         'bathrooms': 'NULL',
-        'price': 'NULL',
+        'price': False,
         'minstay': 'NULL',
         'name': 'NULL',
         'property_type': 'NULL',
@@ -25,6 +25,7 @@ class DataFrame:
         'longitude': 'NULL',
         'location': 'NULL'
     }
+    max = 200
 
     def __init__(self, path_file, default_values):
         try:
@@ -45,11 +46,13 @@ class DataFrame:
 
         not_nan_columns = [key for key, value in self.dict.items() if not value]
         self.dataframe.dropna(axis=0, how='any', subset=not_nan_columns, inplace=True)
+        self.dataframe.update(self.dataframe['price'].mask(self.max <= self.dataframe['price'], lambda x: x / 31))
 
         for column, default_value in self.dict.items():
             if column in self.dataframe.columns:
                 if not isinstance(default_value, bool):
                     self.dataframe.fillna(value={column: self.dict[column]}, inplace=True)
+
             else:
                 self.dataframe = self.dataframe.assign(column=self.dict[column])
                 self.dataframe.rename(columns={"column": column}, inplace=True)

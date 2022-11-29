@@ -15,14 +15,12 @@ class Connect:
                                             host=connection_info['server'],
                                             port=connection_info.getint('port'))
             self.is_connected = True
-
         except psycopg2.OperationalError:
             self.is_connected = False
 
     def execute(self, query):
         if not self.is_connected:
             raise psycopg2.OperationalError
-
         cursor = self.connect.cursor()
         cursor.execute(query)
         cursor.close()
@@ -31,7 +29,6 @@ class Connect:
     def select(self, query):
         if not self.is_connected:
             raise psycopg2.OperationalError
-
         cursor = self.connect.cursor()
         cursor.execute(query)
         result = cursor.fetchall()
@@ -41,14 +38,12 @@ class Connect:
     def create_tables(self):
         if not self.is_connected:
             raise psycopg2.OperationalError
-
         script = open('resources/' + self.db + '_schema.sql', mode='r').read()
         self.execute(script)
 
     def close(self):
         if not self.is_connected:
             raise psycopg2.OperationalError
-
         self.connect.close()
         del self.db
         self.is_connected = False

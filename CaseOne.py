@@ -8,7 +8,6 @@ class CaseOne:
         self.browser = browser
         self.neighborhoods = []
         self.number_rooms = []
-        self.percentages = []
 
     @staticmethod
     def select_statement(select, table, columns, values):
@@ -36,7 +35,6 @@ class CaseOne:
         for row in result:
             self.neighborhoods.append(row["location.neighborhood"])
             self.number_rooms.append(row['record_count'])
-
         total = sum(self.number_rooms)
         for i in range(len(self.neighborhoods)):
             percentage = str(round(self.number_rooms[i] * 100 / total, 2))
