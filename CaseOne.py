@@ -40,9 +40,5 @@ class CaseOne:
         total = sum(self.number_rooms)
         for i in range(len(self.neighborhoods)):
             percentage = str(round(self.number_rooms[i] * 100 / total, 2))
-            if len(percentage) == 3:
-                self.neighborhoods[i] = str(percentage) + '00% ' + self.neighborhoods[i]
-            elif len(percentage) == 4:
-                self.neighborhoods[i] = str(percentage) + '0% ' + self.neighborhoods[i]
-            else:
-                self.neighborhoods[i] = str(percentage) + '% ' + self.neighborhoods[i]
+            zeros = ['0' for i in range(len(percentage), 5)]
+            self.neighborhoods[i] = str(percentage) + ''.join(zeros) + '% ' + self.neighborhoods[i]
