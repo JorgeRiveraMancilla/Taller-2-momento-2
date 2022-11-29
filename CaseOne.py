@@ -4,9 +4,8 @@ from cubes import PointCut, Cell
 
 
 class CaseOne:
-    def __init__(self, browser, connect):
+    def __init__(self, browser):
         self.browser = browser
-        self.connect = connect
         self.neighborhoods = []
         self.number_rooms = []
         self.percentages = []
@@ -30,39 +29,13 @@ class CaseOne:
         plt.show()
 
     def process(self, country, year):
-        statement = self.select_statement('city_dimension.id, city_dimension.city',
-                                          'country_dimension, city_dimension',
-                                          ['country_dimension.country', 'city_dimension.country_id'],
-                                          ['\'' + country + '\'', 'country_dimension.id'])
-        table_cities = self.connect.select(statement)
-
-        for city_info in table_cities:
-            city_id = str(city_info[0])
-            city = city_info[1]
-            statement = self.select_statement('borough_dimension.id, borough_dimension.borough',
-                                              'borough_dimension',
-                                              ['borough_dimension.city_id'],
-                                              [city_id])
-            table_boroughs = self.connect.select(statement)
-
-            for borough_info in table_boroughs:
-                borough_id = str(borough_info[0])
-                borough = borough_info[1]
-                statement = self.select_statement('neighborhood_dimension.id, neighborhood_dimension.neighborhood',
-                                                  'neighborhood_dimension',
-                                                  ['neighborhood_dimension.borough_id'],
-                                                  [borough_id])
-                table_neighborhoods = self.connect.select(statement)
-
-                for neighborhood_info in table_neighborhoods:
-                    neighborhood = neighborhood_info[1]
-                    cut = [PointCut('location', [country, city, borough, neighborhood], 'complete'),
-                           PointCut('survey', [year], 'year')]
-                    cell = Cell(self.browser.cube, cut)
-                    result = self.browser.aggregate(cell)
-
-                    self.neighborhoods.append(neighborhood)
-                    self.number_rooms.append(result.summary['record_count'])
+        cut = [PointCut('location', [country], 'complete'),
+               PointCut('survey', [year], 'year')]
+        cell = Cell(self.browser.cube, cut)
+        result = self.browser.aggregate(cell, drilldown=[('location', 'complete', 'neighborhood')])
+        for row in result:
+            self.neighborhoods.append(row["location.neighborhood"])
+            self.number_rooms.append(row['record_count'])
 
         total = sum(self.number_rooms)
         for i in range(len(self.neighborhoods)):

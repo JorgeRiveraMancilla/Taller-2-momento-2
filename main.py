@@ -50,13 +50,13 @@ if __name__ == '__main__':
     connect_mdb = Connect('mdb')
 
     if config['database'].getboolean('case_one'):
-        case_one = CaseOne(cube.browser, connect_mdb)
+        case_one = CaseOne(cube.browser)
         case_one.process('Portugal', 2017)
         case_one.view()
 
     if config['database'].getboolean('case_two'):
-        case_two = CaseTwo(cube.browser, connect_mdb)
+        case_two = CaseTwo(cube.browser)
         case_two.process('Portugal', 2017)
-        case_two.view_violin()
+        case_two.view()
 
     connect_mdb.close()
