@@ -101,29 +101,23 @@ class MDB:
             city = '\'' + str(row[columns.index('city')]) + '\''
             borough = '\'' + str(row[columns.index('borough')]) + '\''
             neighborhood = '\'' + str(row[columns.index('neighborhood')]) + '\''
-
             statement = RDB.select_statement('country_dimension', ['country'], [country])
             table = self.connect.select(statement)
             id_country = str(table[0][0])
-
             statement = RDB.select_statement('city_dimension', ['country_id', 'city'], [id_country, city])
             table = self.connect.select(statement)
             id_city = str(table[0][0])
-
             statement = RDB.select_statement('borough_dimension', ['city_id', 'borough'], [id_city, borough])
             table = self.connect.select(statement)
             id_borough = str(table[0][0])
-
             statement = RDB.select_statement('neighborhood_dimension',
                                              ['borough_id', 'neighborhood'],
                                              [id_borough, neighborhood])
             table = self.connect.select(statement)
             id_neighborhood = str(table[0][0])
-
             statement = RDB.select_statement('type_dimension', ['name'], [room_type])
             table = self.connect.select(statement)
             id_type = str(table[0][0])
-
             statement = RDB.insert_statement(
                 'facts_table',
                 ['price', 'minstay', 'accommodates', 'bedrooms', 'bathrooms', 'overall_satisfaction', 'reviews',

@@ -141,34 +141,26 @@ class RDB:
             last_modified = '\'' + str(row[columns.index('last_modified')]) + '\''
             latitude = str(row[columns.index('latitude')])
             longitude = str(row[columns.index('longitude')])
-
             statement = self.select_statement('countries', ['name'], [country])
             table = self.connect.select(statement)
             id_country = str(table[0][0])
-
             statement = self.select_statement('cities', ['name'], [city])
             table = self.connect.select(statement)
             id_city = str(table[0][0])
-
             statement = self.select_statement('boroughs', ['name'], [borough])
             table = self.connect.select(statement)
             id_borough = str(table[0][0])
-
             statement = self.select_statement('neighborhoods', ['name'], [neighborhood])
             table = self.connect.select(statement)
             id_neighborhood = str(table[0][0])
-
             self.insert_location(id_country, id_city, id_borough, id_neighborhood)
-
             statement = self.select_statement('locations',
                                               ['id_neighborhood', 'id_borough', 'id_city', 'id_country'],
                                               [id_neighborhood, id_borough, id_city, id_country])
             table = self.connect.select(statement)
             id_location = str(table[0][0])
-
             if name != 'NULL':
                 name = '\'' + name + '\''
-
             if property_type == 'NULL':
                 id_property_type = 'NULL'
             else:
@@ -176,12 +168,10 @@ class RDB:
                 statement = self.select_statement('property_types', ['name'], [property_type])
                 table = self.connect.select(statement)
                 id_property_type = str(table[0][0])
-
             room_type = '\'' + room_type + '\''
             statement = self.select_statement('types', ['name'], [room_type])
             table = self.connect.select(statement)
             id_type = str(table[0][0])
-
             statement = self.insert_statement(
                 'rooms',
                 ['id', 'overall_satisfaction', 'reviews', 'accommodates', 'bedrooms', 'bathrooms', 'price', 'minstay',

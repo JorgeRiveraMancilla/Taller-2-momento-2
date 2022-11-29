@@ -9,7 +9,7 @@ class Connect:
             config.read('resources/config.ini')
             connection_info = config['database']
             self.db = connection_info[db]
-            self.connect = psycopg2.connect(database=db,
+            self.connect = psycopg2.connect(database=self.db,
                                             user=connection_info['user'],
                                             password=connection_info['password'],
                                             host=connection_info['server'],

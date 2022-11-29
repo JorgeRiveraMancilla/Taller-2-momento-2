@@ -1,5 +1,4 @@
 import configparser
-
 import pandas
 
 
@@ -47,16 +46,13 @@ class DataFrame:
         config = configparser.ConfigParser()
         config.read('resources/config.ini')
         max = config['database'].getint('max_price')
-
         not_nan_columns = [key for key, value in self.dict.items() if not value]
         self.dataframe.dropna(axis=0, how='any', subset=not_nan_columns, inplace=True)
         self.dataframe.update(self.dataframe['price'].mask(max <= self.dataframe['price'], lambda x: x / 31))
-
         for column, default_value in self.dict.items():
             if column in self.dataframe.columns:
                 if not isinstance(default_value, bool):
                     self.dataframe.fillna(value={column: self.dict[column]}, inplace=True)
-
             else:
                 self.dataframe = self.dataframe.assign(column=self.dict[column])
                 self.dataframe.rename(columns={"column": column}, inplace=True)
